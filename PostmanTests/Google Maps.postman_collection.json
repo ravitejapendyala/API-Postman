@@ -57,7 +57,8 @@
 							"    pm.expect(responseData.scope).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -74,23 +75,20 @@
 					}
 				},
 				"url": {
-					"raw": "https://rahulshettyacademy.com/maps/api/place/add/json?key=qaclick123",
-					"protocol": "https",
+					"raw": "{{http}}://{{host}}/{{maps-place}}/{{add}}/json?key={{key}}",
+					"protocol": "{{http}}",
 					"host": [
-						"rahulshettyacademy",
-						"com"
+						"{{host}}"
 					],
 					"path": [
-						"maps",
-						"api",
-						"place",
-						"add",
+						"{{maps-place}}",
+						"{{add}}",
 						"json"
 					],
 					"query": [
 						{
 							"key": "key",
-							"value": "qaclick123"
+							"value": "{{key}}"
 						}
 					]
 				}
@@ -140,28 +138,25 @@
 					}
 				},
 				"url": {
-					"raw": "https://rahulshettyacademy.com/maps/api/place/update/json?key=qaclick123",
-					"protocol": "https",
+					"raw": "{{http}}://{{host}}/{{maps-place}}/{{update}}/json?key={{key}}",
+					"protocol": "{{http}}",
 					"host": [
-						"rahulshettyacademy",
-						"com"
+						"{{host}}"
 					],
 					"path": [
-						"maps",
-						"api",
-						"place",
-						"update",
+						"{{maps-place}}",
+						"{{update}}",
 						"json"
 					],
 					"query": [
 						{
-							"key": "key",
-							"value": "qaclick123"
-						},
-						{
 							"key": "place_id",
 							"value": "{{place_id}}",
 							"disabled": true
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
 						}
 					]
 				}
@@ -203,7 +198,8 @@
 							"    pm.expect(responseData.address).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Address should not be empty');",
 							"})"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -211,23 +207,20 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://rahulshettyacademy.com/maps/api/place/get/json?key=qaclick123&place_id={{place_id}}",
-					"protocol": "https",
+					"raw": "{{http}}://{{host}}/{{maps-place}}/{{get}}/json?key={{key}}&place_id={{place_id}}",
+					"protocol": "{{http}}",
 					"host": [
-						"rahulshettyacademy",
-						"com"
+						"{{host}}"
 					],
 					"path": [
-						"maps",
-						"api",
-						"place",
-						"get",
+						"{{maps-place}}",
+						"{{get}}",
 						"json"
 					],
 					"query": [
 						{
 							"key": "key",
-							"value": "qaclick123"
+							"value": "{{key}}"
 						},
 						{
 							"key": "place_id",
@@ -264,7 +257,8 @@
 							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
 							"})"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -281,28 +275,25 @@
 					}
 				},
 				"url": {
-					"raw": "https://rahulshettyacademy.com/maps/api/place/delete/json?key=qaclick123",
-					"protocol": "https",
+					"raw": "{{http}}://{{host}}/{{maps-place}}/{{delete}}/json?key={{key}}",
+					"protocol": "{{http}}",
 					"host": [
-						"rahulshettyacademy",
-						"com"
+						"{{host}}"
 					],
 					"path": [
-						"maps",
-						"api",
-						"place",
-						"delete",
+						"{{maps-place}}",
+						"{{delete}}",
 						"json"
 					],
 					"query": [
 						{
-							"key": "key",
-							"value": "qaclick123"
-						},
-						{
 							"key": "place_id",
 							"value": "{{place_id}}",
 							"disabled": true
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
 						}
 					]
 				}
