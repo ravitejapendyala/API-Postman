@@ -1,4 +1,4 @@
-name: CMS Regression Tests
+name: Google Maps API
 on: 
    workflow_dispatch:
     inputs:
