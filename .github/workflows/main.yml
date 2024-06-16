@@ -1,0 +1,37 @@
+name: Google api tests using Newman CLI
+on: workflow_dispatch
+  # You may pin to the exact commit or the version.
+  # uses: matt-ball/newman-action@64419a64bd84915e081828373fb872be6def2712  
+jobs:
+  Users-Post-Add:
+    runs-on: ubuntu-latest
+    steps:
+# Checks-out repository under $GITHUB_WORKSPACE, so your job can access it   
+     - uses: actions/checkout@v3
+     - name: Create dir
+       run: |
+        mkdir testArtifact
+      
+# Install Node on the runner 
+     - name: Install Node
+       uses: actions/setup-node@v3
+       with:
+        node-version: '18.x'
+    
+# Install newman globally , html extra reporter
+     - name: Install newman
+       run: | 
+        npm install -g newman
+        npm install -g newman-reporter-htmlextra
+     
+# Run the POSTMAN collection
+     - name: Run Tests       
+       run: newman run --insecure -e "EnvData/GoogleMaps.postman_environment.json" -r cli,htmlextra --reporter-htmlextra-export "testArtifact/GoogleAPI.html" --reporter-htmlextra-title "Google - Maps CRUD" -d TestData/GoogleAPI/MapsLanguage.csv PostmanTests/Google Maps.postman_collection.json --folder "Regression"
+            
+    
+# Upload the reports to  TestArtifacts directory
+     - name: Output the results
+       uses: actions/upload-artifact@v3
+       with:
+        name: Reports
+        path: testArtifact
