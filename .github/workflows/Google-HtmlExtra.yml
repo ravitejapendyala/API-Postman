@@ -1,4 +1,4 @@
-name: Google api tests using Newman CLI
+name: Google API newman html extra
 on: workflow_dispatch
   # You may pin to the exact commit or the version.
   # uses: matt-ball/newman-action@64419a64bd84915e081828373fb872be6def2712  
