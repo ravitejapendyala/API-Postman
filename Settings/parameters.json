@@ -1,0 +1,10 @@
+{
+  "go_client1_qa01": {     
+    "hostname": "rahulshettyacademy.com",    
+    "gateway_node": "maps/api/place"    
+  },
+  "go_client2_qa01": {    
+    "hostname": "rahulshettyacademy.com",
+    "gateway_node": "maps/api/place"
+  }
+}

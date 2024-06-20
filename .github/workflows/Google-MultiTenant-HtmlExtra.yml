@@ -3,10 +3,10 @@ on:
    workflow_dispatch:
     inputs:
       Tenant:
-        description: 'Tenant against which tests execute,comma seperated Ex: ["go_client1_qa01","go_client2_qa01"]'
+        description: 'Tenant against which tests execute,comma seperated Ex: ["go-client1-qa01","go-client2-qa01"]'
         type: string
         required: true
-        default: '["go_client1_qa01","go_client2_qa01"]'    
+        default: '["go-client1-qa01","go-client2-qa01"]'    
 jobs:
   GoogleAPI-Post:
     runs-on: ubuntu-latest
@@ -33,3 +33,75 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
+
+      - name: Install Allure CLI
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y openjdk-11-jdk
+            curl -o allure-2.29.0.zip -LO https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.29.0/allure-commandline-2.29.0.zip
+            sudo unzip allure-2.29.0.zip -d /opt/
+            sudo ln -s /opt/allure-2.29.0/bin/allure /usr/bin/allure
+        
+      - name: Install newman
+        continue-on-error: true
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+          npm install -g newman-reporter-allure@2.1.0
+          npm install -g allure-commandline
+
+
+      - name: Get Secret details
+        id: client-credentials
+        shell: pwsh
+        run: |
+            $secretData = '${{ secrets.TENANT_MACHINE_CREDENTIALS }}'          
+            $secretsJsonObject = $secretData | ConvertFrom-Json
+            $realm = "${{ matrix.realm }}"
+            $realm = $realm -replace "-", "_"
+            $clientId = ""
+            $clientSecret = ""
+            Write-Host "::set-output name=realm::$realm"
+            if ($secretsJsonObject | Get-Member -MemberType Properties | Where-Object { $_.Name -eq $realm }) {              
+              $clientSecret = $secretsJsonObject.$realm.clientSecret
+              echo "Realm: $realm"              
+              echo "Client Secret: $clientSecret"
+            } else {
+              echo "Realm '$realm' not found in secrets."
+              exit 1
+            }            
+            Write-Host "::set-output name=clientSecret::$clientSecret" 
+            Write-Host "::set-output name=realm::$realm"     
+
+      - name: Read host details from parameters.json
+        id: read-version
+        run: |
+              realm=$(echo "${{ matrix.realm }}" | tr '-' '_')              
+              gateway_node=$(jq -r ".$realm.gateway_node" Settings/parameters.json)
+              host=$(jq -r ".$realm.hostname" Settings/parameters.json)              
+              echo "Extracted gateway_node: $gateway_node"
+              echo "Extracted host: $host"              
+              echo "gateway_node=$gateway_node" >> $GITHUB_ENV
+              echo "host=$host" >> $GITHUB_ENV
+      - name: Modify environment varaible file with hostname , gateway & Secret
+        run: |
+                echo "Inside Modify environment file with clientId & Secret"
+                echo ${{ env.host }}
+                echo ${{ env.gateway_node }}                      
+                echo ${{ steps.client-credentials.outputs.realm }}                                                
+                sed -i "s|{{hostname}}|${{ env.host }}|g" "EnvData/GoogleMapsParameterized.postman_environment.json"             
+                sed -i "s|{{AuthClientSecret}}|${{ steps.client-credentials.outputs.clientSecret }}|g" "EnvData/GoogleMapsParameterized.postman_environment.json"
+                sed -i "s|{{gateway_node}}|${{ env.gateway_node }}|g" "EnvData/GoogleMapsParameterized.postman_environment.json"            
+        shell: bash
+
+        # Run the POSTMAN collection
+      - name: Run Tests       
+        run: newman run --insecure -e "EnvData/GoogleMapsParameterized.postman_environment.json" -r cli,htmlextra --reporter-htmlextra-export "testArtifact/${{ steps.client-credentials.outputs.realm }}/GoogleAPI.html" --reporter-htmlextra-title "Google - Maps CRUD" -d TestData/GoogleAPI/MapsLanguage.csv "PostmanTests/Google Maps.postman_collection.json" --folder "Regression"
+          
+  
+        # Upload the reports to  TestArtifacts directory
+      - name: Output the results 
+        uses: actions/upload-artifact@v3
+        with:
+         name: "Reports-${{ steps.client-credentials.outputs.realm }}"
+         path: "testArtifact/${{ steps.client-credentials.outputs.realm }}"
