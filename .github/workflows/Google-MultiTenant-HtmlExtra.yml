@@ -100,8 +100,8 @@ jobs:
           
   
         # Upload the reports to  TestArtifacts directory
-      - name: Output the results
+      - name: Output the results 
         uses: actions/upload-artifact@v3
         with:
-         name: Reports
-         path: testArtifact/${{ steps.client-credentials.outputs.realm }}
+         name: "Reports-${{ steps.client-credentials.outputs.realm }}"
+         path: "testArtifact/${{ steps.client-credentials.outputs.realm }}"
