@@ -3,10 +3,10 @@ on:
    workflow_dispatch:
     inputs:
       Tenant:
-        description: 'Tenant against which tests execute,comma seperated Ex: ["go_client1_qa01","go_client2_qa01"]'
+        description: 'Tenant against which tests execute,comma seperated Ex: ["go-client1-qa01","go-client2-qa01"]'
         type: string
         required: true
-        default: '["go_client1_qa01","go_client2_qa01"]'    
+        default: '["go-client1-qa01","go-client2-qa01"]'    
 jobs:
   GoogleAPI-Post:
     runs-on: ubuntu-latest
@@ -50,6 +50,29 @@ jobs:
           npm install -g newman-reporter-allure@2.1.0
           npm install -g allure-commandline
 
+
+      - name: Get Secret details
+        id: client-credentials
+        shell: pwsh
+        run: |
+            $secretData = '${{ secrets.TENANT_MACHINE_CREDENTIALS }}'          
+            $secretsJsonObject = $secretData | ConvertFrom-Json
+            $realm = "${{ matrix.realm }}"
+            $realm = $realm -replace "-", "_"
+            $clientId = ""
+            $clientSecret = ""
+            Write-Host "::set-output name=realm::$realm"
+            if ($secretsJsonObject | Get-Member -MemberType Properties | Where-Object { $_.Name -eq $realm }) {              
+              $clientSecret = $secretsJsonObject.$realm.clientSecret
+              echo "Realm: $realm"              
+              echo "Client Secret: $clientSecret"
+            } else {
+              echo "Realm '$realm' not found in secrets."
+              exit 1
+            }            
+            Write-Host "::set-output name=clientSecret::$clientSecret" 
+            Write-Host "::set-output name=realm::$realm"     
+
       - name: Read host details from parameters.json
         id: read-version
         run: |
@@ -68,6 +91,7 @@ jobs:
             echo ${{ steps.client-credentials.outputs.realm }}                                    
             sed -i "s/{{gateway_node}}/${{ env.gateway_node }}/g" "EnvData/GoogleMapsParameterized.postman_environment.json"
             sed -i "s/{{hostname}}/${{ env.host }}/g" "EnvData/GoogleMapsParameterized.postman_environment.json"             
+            sed -i "s/{{AuthClientSecret}}/${{ steps.client-credentials.outputs.clientSecret }}/g" "EnvData/GoogleMapsParameterized.postman_environment.json"             
         shell: bash
 
         # Run the POSTMAN collection
