@@ -96,7 +96,7 @@ jobs:
 
         # Run the POSTMAN collection
       - name: Run Tests       
-        run: newman run --insecure -e "EnvData/GoogleMapsParameterized.postman_environment.json" -r cli,htmlextra --reporter-htmlextra-export "testArtifact/GoogleAPI.html" --reporter-htmlextra-title "Google - Maps CRUD" -d TestData/GoogleAPI/MapsLanguage.csv "PostmanTests/Google Maps.postman_collection.json" --folder "Regression"
+        run: newman run --insecure -e "EnvData/GoogleMapsParameterized.postman_environment.json" -r cli,htmlextra --reporter-htmlextra-export "testArtifact/${{ steps.client-credentials.outputs.realm }}/GoogleAPI.html" --reporter-htmlextra-title "Google - Maps CRUD" -d TestData/GoogleAPI/MapsLanguage.csv "PostmanTests/Google Maps.postman_collection.json" --folder "Regression"
           
   
         # Upload the reports to  TestArtifacts directory
@@ -104,4 +104,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
          name: Reports
-         path: testArtifact
+         path: testArtifact/${{ steps.client-credentials.outputs.realm }}
