@@ -85,16 +85,13 @@ jobs:
               echo "host=$host" >> $GITHUB_ENV
       - name: Modify environment file with clientId & Secret
         run: |
-            echo "Inside Modify environment file with clientId & Secret"
-            echo ${{ env.host }}
-            echo ${{ env.gateway_node }}                      
-            echo ${{ steps.client-credentials.outputs.realm }}                                                
-            sed -i "s/{{hostname}}/${{ env.host }}/g" "EnvData/GoogleMapsParameterized.postman_environment.json"             
-            echo "Updated host: "${{ env.host }}
-            sed -i "s/{{AuthClientSecret}}/${{ steps.client-credentials.outputs.clientSecret }}/g" "EnvData/GoogleMapsParameterized.postman_environment.json"
-            echo "Updated secret: "${{ steps.client-credentials.outputs.clientSecret }}
-            sed -i "s/{{gateway_node}}/${{ env.gateway_node }}/g" "EnvData/GoogleMapsParameterized.postman_environment.json"
-            echo "Updated gateway_node: "${{ env.gateway_node }}             
+                echo "Inside Modify environment file with clientId & Secret"
+                echo ${{ env.host }}
+                echo ${{ env.gateway_node }}                      
+                echo ${{ steps.client-credentials.outputs.realm }}                                                
+                sed -i "s|{{hostname}}|${{ env.host }}|g" "EnvData/GoogleMapsParameterized.postman_environment.json"             
+                sed -i "s|{{AuthClientSecret}}|${{ steps.client-credentials.outputs.clientSecret }}|g" "EnvData/GoogleMapsParameterized.postman_environment.json"
+                sed -i "s|{{gateway_node}}|${{ env.gateway_node }}|g" "EnvData/GoogleMapsParameterized.postman_environment.json"            
         shell: bash
 
         # Run the POSTMAN collection
