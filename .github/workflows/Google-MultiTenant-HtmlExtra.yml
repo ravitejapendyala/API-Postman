@@ -83,7 +83,7 @@ jobs:
               echo "Extracted host: $host"              
               echo "gateway_node=$gateway_node" >> $GITHUB_ENV
               echo "host=$host" >> $GITHUB_ENV
-      - name: Modify environment file with clientId & Secret
+      - name: Modify environment varaible file with hostname , gateway & Secret
         run: |
                 echo "Inside Modify environment file with clientId & Secret"
                 echo ${{ env.host }}
