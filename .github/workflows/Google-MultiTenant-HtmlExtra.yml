@@ -1,4 +1,4 @@
-name: CMS Regression Tests
+name: Google Multitenant tests
 on: 
    workflow_dispatch:
     inputs:
